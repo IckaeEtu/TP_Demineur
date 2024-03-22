@@ -7,7 +7,7 @@ public class Plateau{
     protected int nbColonnes;
     protected int pourcentageDeBombes;
     protected int nbBombes;
-    protected List<Case> lePlateau;
+    protected List<CaseIntelligente> lePlateau;
 
     /*Créer un plateau vide avec un nb lignes, un nb colonnes et un pourcentage de bombe souhaité*/
     public Plateau(int nbLignes, int nbColonnes, int pourcentage){
@@ -21,15 +21,47 @@ public class Plateau{
     /*Créer une liste de case vide  */
     private void creerLesCasesVides(){
         for (int i=0; i < this.nbLignes*this.nbColonnes ;++i){
-            this.lePlateau.add(i,new Case());
+            this.lePlateau.add(i,new CaseIntelligente());
         }
     }   
 
     /*Créer une lsite de case intelligentes */
     private void rendLesCasesIntelligentes(){
-        for(int i=0; i < this.nbLignes*this.nbColonnes ;++i){
+        for (int i=0; i<this.nbLignes*this.nbColonnes;++i){
             this.lePlateau.add(i,new CaseIntelligente());
         }
+        
+        for (int i = 0; i < this.nbLignes; ++i){
+            for (int j = 0; j< this.nbColonnes; ++i){
+                CaseIntelligente kase = this.getCase(i, j);
+
+                if (this.estVoisine(i-1, j-1)){
+                    kase.ajouteVoisine(this.getCase(i-1, j-1));
+                } if (this.estVoisine(i-1, j)){
+                    kase.ajouteVoisine(this.getCase(i-1, j));
+                } if (this.estVoisine(i-1, j+1)){
+                    kase.ajouteVoisine(this.getCase(-1, j+1));
+                } if (this.estVoisine(i, j-1)){
+                    kase.ajouteVoisine(this.getCase(i, j-1));
+                } if (this.estVoisine(i, j)){
+                    kase.ajouteVoisine(this.getCase(i, j));
+                } if (this.estVoisine(i, j+1)){
+                    kase.ajouteVoisine(this.getCase(i, j+1));
+                } if (this.estVoisine(i+1, j-1)){
+                    kase.ajouteVoisine(this.getCase(i, j-1));
+                } if (this.estVoisine(i+1, j)){
+                    kase.ajouteVoisine(this.getCase(i, j-1));
+                } if (this.estVoisine(i+1, j+1)){
+                    kase.ajouteVoisine(this.getCase(i, j-1));
+                }
+            }
+        } 
+    }
+
+    public boolean estVoisine(int i,int j){
+        int nbColonnes = this.getNbColonnes();
+        int nbLignes = this.getNbLignes();
+        return (!((j-1)%nbColonnes==(nbColonnes-1) || ((j+1)%nbColonnes==0) || (i+1>nbLignes) || (i-1<0)));
     }
 
     /*Renvoie le nombre de lignes */
@@ -48,7 +80,7 @@ public class Plateau{
     }
 
     /*Renvoie la case aux coordonnées (numligne,numolonne) */
-    public Case getCase(int numLigne, int numColonne){
+    public CaseIntelligente getCase(int numLigne, int numColonne){
         return this.lePlateau.get(numLigne*this.getNbColonnes()+numColonne);
     }
 
@@ -71,7 +103,7 @@ public class Plateau{
 
     /*Remet toute les cases dans leur état initial */
     public void reset(){
-        this.rendLesCasesIntelligentes();
+        this.creerLesCasesVides();
     }
 
 
